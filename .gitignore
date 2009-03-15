@@ -1,0 +1,8 @@
+*.py[oc]
+*~
+\#*
+*#
+.#*
+
+# Ignore developer settings
+asteriski/settings-*
