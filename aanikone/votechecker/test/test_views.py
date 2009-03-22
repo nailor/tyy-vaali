@@ -153,7 +153,6 @@ def test_vote_single_already_voted_electronically():
         )
     p.save()
     c = Client()
-    c.session['place'] = place.id
     response = c.post(
         '/votechecker/vote/',
         {'number': '1234', 'organization': 'tse.fi', 'place': 1}
@@ -206,7 +205,6 @@ def test_vote_single_already_voted_on_paper():
         )
     ticket.save()
     c = Client()
-    c.session['place'] = place.id
     response = c.post(
         '/votechecker/vote/',
         {'number': '1234', 'organization': 'tse.fi', 'place': 1}
@@ -253,7 +251,6 @@ def test_vote_no_ticket():
         )
     p.save()
     c = Client()
-    c.session['place'] = place.id
     response = c.post(
         '/votechecker/vote/',
         {'number': '1234', 'organization': 'tse.fi', 'place': 1}
@@ -299,7 +296,6 @@ def test_vote_success_single():
         )
     p.save()
     c = Client()
-    c.session['place'] = place.id
     response = c.post(
         '/votechecker/vote/',
         {'number': '1234', 'organization': 'tse.fi', 'place': 1}
@@ -317,3 +313,59 @@ def test_vote_success_single():
 
     verify_p = Person.objects.get(personnumber='1234')
     assert verify_p.hasvoted
+
+def test_vote_return_slip():
+    place = Place(
+        name="Testplace",
+        description="foo",
+        )
+    place.save()
+    e = Election(
+        name="testelect",
+        password="foo",
+        authurl="bar",
+        isopen=True,
+        production=True,
+        ispublic=True,
+        firstpassword=True,
+        secondpassword=True,
+        stv=True,
+        government=True,
+        toelect=100,
+        )
+    e.save()
+    p = Person(
+        personnumber="1234",
+        electionname=e,
+        hasvoted=True,
+        votestyle=0,
+        hetu='foob',
+        organization='tse.fi'
+        )
+    p.save()
+    t = Ticket(
+        voter=p,
+        release_place=place,
+        )
+    t.save()
+    c = Client()
+    response = c.post(
+        '/votechecker/vote/',
+        {'number': '1234', 'organization': 'tse.fi', 'place': 1}
+        )
+    eq(response.status_code, 200)
+    try:
+        c = simplejson.loads(response.content)
+    except ValueError, e:
+        print response.content
+        raise
+    eq(c, {'ok': 'OK. Ticket can be stamped.'})
+    tickets = Ticket.objects.all()
+    eq(len(tickets), 1)
+    eq(tickets[0].voter.id, p.id)
+    eq(tickets[0].submit_place.id, place.id)
+
+    verify_p = Person.objects.get(personnumber='1234')
+    assert verify_p.hasvoted
+    eq(verify_p.votestyle, 1)
+

@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.core import serializers
 from django.utils.translation import ugettext as _
 from aanikone.utils import (
@@ -25,7 +26,7 @@ def vote(request):
                         f.person.votedate.strftime('%d.%m.%Y at %H:%M')
                         )
                     ]}
-        if f.person.votestyle == 1:
+        elif f.person.votestyle == 1:
             ticket = f.person.get_ticket()
             if ticket is None:
                 # Fallback in very obscure situation, where person has
@@ -38,6 +39,20 @@ def vote(request):
                             ticket.release_place,
                             f.person.votedate.strftime('%d.%m.%Y at %H:%M')
                             )]}
+        else:
+            # Case: Person has received the slip but has not returned it
+            ticket = f.person.get_ticket()
+            if ticket is None:
+                # Fallback in very obscure situation, where person has
+                # no tickets but is marked as voted.
+                errors = {'__all__': [_('Person has already voted.')]}
+            else:
+                ticket = ticket[0]
+                f.person.vote()
+                ticket.submit_place = f.place
+                ticket.submit_time = datetime.now()
+                ticket.save()
+                return json_response({'ok': 'OK. Ticket can be stamped.'})
         return json_response({'errors': errors})
     f.person.give_slip(f.place)
     return json_response({'ok': _('OK. Give ticket.')})
