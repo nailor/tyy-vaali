@@ -1,20 +1,29 @@
 from nose.tools import eq_ as eq
 
-from aanikone.votechecker.models import Election, Person
-from aanikone.votechecker.forms import CheckForm
+from aanikone.votechecker.models import Election, Person, Place
+from aanikone.votechecker.forms import VoterForm
 
 def test_form_empty():
-    f = CheckForm({})
+    f = VoterForm({})
     assert not f.is_valid()
     eq(f.errors,
        {
             'number': ['This field is required.'],
             'organization': ['This field is required.'],
+            'place': ['This field is required.'],
             }
        )
 
 def test_form_wrong_number():
-    f = CheckForm({'organization': 'utu.fi', 'number': '12345'})
+    t = Place(
+        name='Testplace',
+        description='Foo',
+        )
+    t.save()
+    f = VoterForm({
+            'organization': 'utu.fi',
+            'number': '12345',
+            'place': '1'})
     assert not f.is_valid()
     eq(f.errors,
        {
@@ -22,6 +31,11 @@ def test_form_wrong_number():
             })
 
 def test_form_wrong_org():
+    t = Place(
+        name='Testplace',
+        description='Foo',
+        )
+    t.save()
     e = Election(
         name="testelect",
         password="foo",
@@ -49,7 +63,7 @@ def test_form_wrong_org():
         organization='utu.fi',
         )
     p.save()
-    f = CheckForm({'organization': 'tse.fi', 'number': '123'})
+    f = VoterForm({'organization': 'tse.fi', 'number': '123', 'place': 1})
     assert not f.is_valid()
     eq(f.errors,
        {
@@ -57,6 +71,11 @@ def test_form_wrong_org():
             })
 
 def test_form_correct_data():
+    t = Place(
+        name='Testplace',
+        description='Foo',
+        )
+    t.save()
     e = Election(
         name="testelect",
         password="foo",
@@ -84,7 +103,7 @@ def test_form_correct_data():
         organization='utu.fi',
         )
     p.save()
-    f = CheckForm({'organization': 'utu.fi', 'number': '123'})
+    f = VoterForm({'organization': 'utu.fi', 'number': '123', 'place': 1})
     assert f.is_valid()
     eq(f.errors, {})
     eq(f.person.personnumber, "123")
