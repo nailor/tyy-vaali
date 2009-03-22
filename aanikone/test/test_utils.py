@@ -3,6 +3,7 @@ from nose.tools import eq_ as eq
 import simplejson
 
 from django.http import HttpResponse
+from django import forms
 
 from aanikone import utils
 from aanikone.votechecker.models import Election, Person
@@ -48,9 +49,9 @@ def test_json_serializer():
         print repr(r.content)
         raise
     c = c[0]
-    eq(c['pk'], '123')
     eq(c['model'], 'votechecker.person')
     eq(c['fields'], {
+            'personnumber': '123',
             'hasvoted': True,
             'city': None,
             'firstname': None,
@@ -65,3 +66,21 @@ def test_json_serializer():
             'password': None,
             'lastname': None,
             })
+
+def test_serialize_errors():
+    class TestForm(forms.Form):
+        f = forms.CharField()
+
+    testform = TestForm({})
+    assert not testform.is_valid()
+    eq(utils.serialize_errors(testform.errors),
+       {'f': ['This field is required.']}
+       )
+
+def test_serialize_errors_form_ok():
+    class TestForm(forms.Form):
+        f = forms.CharField()
+
+    testform = TestForm({'f': 'foo'})
+    assert testform.is_valid()
+    eq(utils.serialize_errors(testform.errors), {})
