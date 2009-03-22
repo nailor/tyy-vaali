@@ -136,7 +136,7 @@ class Person(models.Model):
 
     class Meta:
         db_table = u'person'
-	ordering = ['lastname', 'firstname']
+        ordering = ['lastname', 'firstname']
         unique_together = ('personnumber', 'organization')
 
 class Place(models.Model):
