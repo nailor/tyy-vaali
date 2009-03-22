@@ -1,4 +1,11 @@
+from datetime import datetime
+
 from django.db import models
+from django.utils.translation import ugettext as _
+
+PAPERVOTE = 1
+ELECTRONIC = 2
+PRE_ELECTRONIC = 3
 
 class Election(models.Model):
     """Election model, automatically generated from WebVoter database"""
@@ -13,7 +20,6 @@ class Election(models.Model):
     stv = models.BooleanField()
     government = models.BooleanField()
     toelect = models.IntegerField()
-
     class Meta:
         db_table = u'election'
 
@@ -39,19 +45,19 @@ class Person(models.Model):
 
     """
     electionname = models.ForeignKey(Election, db_column='electionname')
-    personnumber = models.TextField(primary_key=True)
-    lastname = models.TextField(null=True, blank=True)
-    firstname = models.TextField(null=True, blank=True)
-    emailaddress = models.TextField(null=True, blank=True)
-    address = models.TextField(null=True, blank=True)
-    city = models.TextField(null=True, blank=True)
-    zipcode = models.TextField(null=True, blank=True)
-    votedate = models.DateTimeField(null=True, blank=True)
+    personnumber = models.TextField()
+    organization = models.TextField()
+    lastname = models.TextField(null=True)
+    firstname = models.TextField(null=True)
+    emailaddress = models.TextField(null=True)
+    address = models.TextField(null=True)
+    city = models.TextField(null=True)
+    zipcode = models.TextField(null=True)
+    votedate = models.DateTimeField(null=True)
     hasvoted = models.BooleanField()
     votestyle = models.IntegerField()
-    password = models.TextField(null=True, blank=True)
+    password = models.TextField(null=True)
     hetu = models.TextField()
-    organization = models.TextField()
 
     def __unicode__(self):
         firstnames = self.firstname.split()
@@ -83,6 +89,38 @@ class Person(models.Model):
         objs = Person.objects.filter(hetu=self.hetu)
         try:
             for p in objs:
+                # Votes set this way are paper votes
+                p.votestyle = PAPERVOTE
+                p.hasvoted = True
+                p.save()
+        finally:
+            # Just a security measure: Mark this user as voted in the
+            # end (even if something fails), the check_vote should then
+            # return False later on.
+            self.votestyle = PAPERVOTE
+            self.hasvoted = True
+            self.save()
+
+    def get_ticket(self):
+        objs = Person.objects.filter(hetu=self.hetu)
+        for p in objs:
+            if p.ticket_set.all().count() > 0:
+                return p.ticket_set.all()
+        return None
+
+    def give_slip(self):
+        """Give person a voting slip and mark person as voted.
+
+        This prevents the electronical voting from working. Votestyle
+        is not changed, that is used to determine (in addition to the
+        Ticket entry) that the person has a slip, but has not yet
+        returned it.
+
+        """
+        objs = Person.objects.filter(hetu=self.hetu)
+        try:
+            for p in objs:
+                # Votes set this way are paper votes
                 p.hasvoted = True
                 p.save()
         finally:
@@ -95,4 +133,41 @@ class Person(models.Model):
     class Meta:
         db_table = u'person'
 	ordering = ['lastname', 'firstname']
+        unique_together = ('personnumber', 'organization')
+
+class Place(models.Model):
+    name = models.CharField(_(u'name'), max_length=500)
+    description = models.TextField(_(u'description'))
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = _(u'voting place')
+        verbose_name_plural = _(u'voting places')
+        ordering = ['name',]
+
+class Ticket(models.Model):
+    voter = models.ForeignKey(Person, verbose_name=_(u'voter'), unique=True)
+    release_place = models.ForeignKey(Place,
+                                      verbose_name=_(u'release place'),
+                                      related_name='released_tickets')
+    release_time = models.DateTimeField(_(u'release time'),
+                                        default=datetime.now)
+    submit_time = models.DateTimeField(_(u'submit time'), null=True)
+    submit_place = models.ForeignKey(Place,
+                                     verbose_name=_(u'submit place'),
+                                     related_name='submitted_tickets',
+                                     null=True)
+
+    def __unicode__(self):
+        return u'%s, %s (%s)' % (str(self.voter).decode('utf-8'),
+                                   self.release_place,
+                                   self.release_time)
+
+    class Meta:
+        verbose_name = _(u'ticket')
+        verbose_name_plural = _(u'tickets')
+        ordering = ['release_time',]
+
 
