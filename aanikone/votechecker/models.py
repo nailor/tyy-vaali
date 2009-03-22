@@ -108,7 +108,7 @@ class Person(models.Model):
                 return p.ticket_set.all()
         return None
 
-    def give_slip(self):
+    def give_slip(self, place):
         """Give person a voting slip and mark person as voted.
 
         This prevents the electronical voting from working. Votestyle
@@ -129,6 +129,10 @@ class Person(models.Model):
             # return False later on.
             self.hasvoted = True
             self.save()
+            t = Ticket(
+                voter=self,
+                release_place=place)
+            t.save()
 
     class Meta:
         db_table = u'person'

@@ -39,11 +39,6 @@ def vote(request):
                             f.person.votedate.strftime('%d.%m.%Y at %H:%M')
                             )]}
         return json_response({'errors': errors})
-    t = Ticket(
-        voter=f.person,
-        release_place=f.place,
-        )
-    t.save()
-    f.person.give_slip()
+    f.person.give_slip(f.place)
     return json_response({'ok': _('OK. Give ticket.')})
 
