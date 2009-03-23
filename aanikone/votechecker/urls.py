@@ -5,4 +5,5 @@ urlpatterns = patterns(
     (r'^$', 'index'),
     (r'^whois/$', 'whois'),
     (r'^commit/$', 'vote'),
+    (r'^list/([0-9]*)/$', 'ticket_list'),
 )

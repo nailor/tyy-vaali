@@ -479,3 +479,89 @@ def test_index_voteplace():
     response = c.get('/tarkistus/')
     eq(response.status_code, 200)
     assert 'Foobarland' in response.content
+
+def test_get_tickets_out():
+    place = Place(name='Foobarland')
+    place.save()
+    e = Election(
+        name="testelect",
+        password="foo",
+        authurl="bar",
+        isopen=True,
+        production=True,
+        ispublic=True,
+        firstpassword=True,
+        secondpassword=True,
+        stv=True,
+        government=True,
+        toelect=100,
+        )
+    e.save()
+    p = Person(
+        personnumber="42434",
+        electionname=e,
+        hasvoted=False,
+        votestyle=0,
+        hetu='foob',
+        organization='tukkk.fi',
+        id=1,
+        )
+    p.save()
+    p.give_slip(place)
+    p = Person(
+        personnumber="1234",
+        electionname=e,
+        hasvoted=False,
+        votestyle=0,
+        hetu='foob',
+        organization='utu.fi',
+        id=2,
+        )
+    p.save()
+    p.give_slip(place)
+    p = Person(
+        personnumber="32234",
+        electionname=e,
+        hasvoted=False,
+        votestyle=0,
+        hetu='foob',
+        organization='tukkk.fi',
+        id=3,
+        )
+    p.save()
+    p.give_slip(place)
+    c = Client()
+    response = c.get('/tarkistus/list/%d/' % place.id)
+    eq(response.status_code, 200)
+    try:
+        c = simplejson.loads(response.content)
+    except ValueError:
+        print response.content
+        raise
+    eq(len(c), 3)
+    eq(c,
+       [{'number': '1234', 'organization': 'utu.fi'},
+        {'number': '32234', 'organization': 'tukkk.fi'},
+        {'number': '42434', 'organization': 'tukkk.fi'},
+        ])
+
+def view_empty_tickets_list():
+    place = Place(name='Foobarland')
+    place.save()
+    e = Election(
+        name="testelect",
+        password="foo",
+        authurl="bar",
+        isopen=True,
+        production=True,
+        ispublic=True,
+        firstpassword=True,
+        secondpassword=True,
+        stv=True,
+        government=True,
+        toelect=100,
+        )
+    e.save()
+    response = c.get('/tarkistus/list/%d/' % place.id)
+    eq(response.status_code, 200)
+    eq(response.content, simplejson.dump([]))

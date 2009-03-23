@@ -149,6 +149,12 @@ class Place(models.Model):
     def __unicode__(self):
         return self.name
 
+    def find_open_tickets(self):
+        return self.released_tickets.filter(
+            submit_place=None,
+            submit_time=None
+            )
+
     class Meta:
         verbose_name = _(u'voting place')
         verbose_name_plural = _(u'voting places')

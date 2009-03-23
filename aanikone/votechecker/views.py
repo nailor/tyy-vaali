@@ -1,7 +1,7 @@
 from django.core import serializers
 from django.http import HttpResponseNotAllowed
 from django.utils.translation import ugettext as _
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 
 from aanikone.utils import (
@@ -76,3 +76,18 @@ def vote(request):
     f.person.give_slip(f.place)
     return json_response({'ok': _('OK. Give ticket.')})
 
+def ticket_list(request, place_id):
+    place = get_object_or_404(Place, pk=place_id)
+    tickets = place.find_open_tickets()
+    result = []
+    for ticket in tickets:
+        result.append({
+                'number': ticket.voter.personnumber,
+                'organization': ticket.voter.organization
+                })
+    # Do an ugly sort.
+    #
+    # FIXME: This SHOULD be done in the database level, but I ran out
+    # of time to ponder the Django ORM any more
+    result.sort(key=lambda x: x['number'])
+    return json_response(result)
