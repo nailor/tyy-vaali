@@ -22,11 +22,11 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-DATABASE_ENGINE = 'postgresql_psycopg2'
-DATABASE_NAME = 'webvoter'
-DATABASE_USER = 'jyrki'
-# DATABASE_ENGINE = 'sqlite3'
-# DATABASE_NAME = 't'
+# DATABASE_ENGINE = 'postgresql_psycopg2'
+# DATABASE_NAME = 'webvoter'
+# DATABASE_USER = 'jyrki'
+DATABASE_ENGINE = 'sqlite3'
+DATABASE_NAME = 't'
 DATABASE_PASSWORD = ''
 DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
 DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
