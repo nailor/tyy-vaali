@@ -2,8 +2,9 @@ from nose.tools import eq_ as eq
 from django.test.client import Client
 
 import simplejson
-from datetime import datetime
 
+from datetime import datetime
+from django.conf import settings
 from aanikone.votechecker.models import (
     Election,
     Person,
@@ -369,3 +370,86 @@ def test_vote_return_slip():
     assert verify_p.hasvoted
     eq(verify_p.votestyle, 1)
 
+def test_vote_whole_procedure():
+    place = Place(
+        name="Testplace",
+        description="foo",
+        )
+    place.save()
+    e = Election(
+        name="testelect",
+        password="foo",
+        authurl="bar",
+        isopen=True,
+        production=True,
+        ispublic=True,
+        firstpassword=True,
+        secondpassword=True,
+        stv=True,
+        government=True,
+        toelect=100,
+        )
+    e.save()
+    p = Person(
+        personnumber="1234",
+        electionname=e,
+        hasvoted=False,
+        votestyle=0,
+        hetu='foob',
+        organization='tse.fi'
+        )
+    p.save()
+    c = Client()
+    settings.TEST_TIME = datetime(1900, 1, 1)
+    response = c.post('/votechecker/vote/',
+                      {'number': '1234', 'organization': 'tse.fi', 'place': 1})
+    eq(response.status_code, 200)
+    eq(response.content, simplejson.dumps({'ok': 'OK. Give ticket.'}))
+    t = Ticket.objects.get(
+        release_place=place,
+        release_time=datetime(1900, 1, 1),
+        voter=p,
+        submit_place=None,
+        submit_time=None,
+        )
+    settings.TEST_TIME = datetime(1900, 1, 2)
+    response = c.post('/votechecker/vote/',
+                      {'number': '1234', 'organization': 'tse.fi', 'place': 1})
+    eq(response.status_code, 200)
+    eq(response.content,
+       simplejson.dumps({'ok': 'OK. Ticket can be stamped.'}))
+    t = Ticket.objects.get(
+        release_place=place,
+        release_time=datetime(1900, 1, 1),
+        voter=p,
+        submit_place=place,
+        submit_time=datetime(1900, 1, 2),
+        )
+
+    response = c.post('/votechecker/vote/',
+                      {'number': '1234', 'organization': 'tse.fi', 'place': 1})
+    eq(response.status_code, 200)
+    eq(response.content,
+       simplejson.dumps(
+            {'errors': {'__all__':
+                            ['Person has voted in Testplace on 02.01.1900'+
+                             ' at 00:00']}}))
+    Person.objects.get(
+        personnumber="1234",
+        electionname=e,
+        hasvoted=True,
+        votestyle=1,
+        hetu='foob',
+        organization='tse.fi',
+        votedate=datetime(1900, 1, 2)
+        )
+
+def test_whois_get():
+    c = Client()
+    response = c.get('/votechecker/whois/')
+    eq(response.status_code, 405)
+
+def test_vote_get():
+    c = Client()
+    response = c.get('/votechecker/vote/')
+    eq(response.status_code, 405)

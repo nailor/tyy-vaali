@@ -1,5 +1,5 @@
-from datetime import datetime
 from django.core import serializers
+from django.http import HttpResponseNotAllowed
 from django.utils.translation import ugettext as _
 from aanikone.utils import (
     serialized_json_response,
@@ -8,14 +8,22 @@ from aanikone.utils import (
     )
 from aanikone.votechecker.models import Person, Ticket
 from aanikone.votechecker.forms import VoterForm
+from aanikone.utils import now
+
+def index(request):
+    pass
 
 def whois(request):
+    if request.method != 'POST':
+        return HttpResponseNotAllowed(['POST'])
     f = VoterForm(request.POST)
     if f.is_valid():
         return serialized_json_response([f.person])
     return json_response({'errors': serialize_errors(f.errors)})
 
 def vote(request):
+    if request.method != 'POST':
+        return HttpResponseNotAllowed(['POST'])
     f = VoterForm(request.POST)
     if not f.is_valid():
         return json_response({'errors': serialize_errors(f.errors)})
@@ -50,7 +58,7 @@ def vote(request):
                 ticket = ticket[0]
                 f.person.vote()
                 ticket.submit_place = f.place
-                ticket.submit_time = datetime.now()
+                ticket.submit_time = now()
                 ticket.save()
                 return json_response({'ok': 'OK. Ticket can be stamped.'})
         return json_response({'errors': errors})

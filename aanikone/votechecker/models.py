@@ -1,7 +1,7 @@
-from datetime import datetime
-
 from django.db import models
 from django.utils.translation import ugettext as _
+
+from aanikone.utils import now
 
 PAPERVOTE = 1
 ELECTRONIC = 2
@@ -92,6 +92,7 @@ class Person(models.Model):
                 # Votes set this way are paper votes
                 p.votestyle = PAPERVOTE
                 p.hasvoted = True
+                p.votedate = now()
                 p.save()
         finally:
             # Just a security measure: Mark this user as voted in the
@@ -99,6 +100,7 @@ class Person(models.Model):
             # return False later on.
             self.votestyle = PAPERVOTE
             self.hasvoted = True
+            self.votedate = now()
             self.save()
 
     def get_ticket(self):
@@ -131,13 +133,14 @@ class Person(models.Model):
             self.save()
             t = Ticket(
                 voter=self,
-                release_place=place)
+                release_place=place,
+                )
             t.save()
 
     class Meta:
         db_table = u'person'
         ordering = ['lastname', 'firstname']
-        unique_together = ('personnumber', 'organization')
+        unique_together = ('electionname', 'personnumber', 'organization')
 
 class Place(models.Model):
     name = models.CharField(_(u'name'), max_length=500)
@@ -157,7 +160,7 @@ class Ticket(models.Model):
                                       verbose_name=_(u'release place'),
                                       related_name='released_tickets')
     release_time = models.DateTimeField(_(u'release time'),
-                                        default=datetime.now)
+                                        default=now)
     submit_time = models.DateTimeField(_(u'submit time'), null=True)
     submit_place = models.ForeignKey(Place,
                                      verbose_name=_(u'submit place'),
@@ -173,5 +176,3 @@ class Ticket(models.Model):
         verbose_name = _(u'ticket')
         verbose_name_plural = _(u'tickets')
         ordering = ['release_time',]
-
-
