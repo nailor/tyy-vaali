@@ -2,8 +2,10 @@ from nose.tools import eq_ as eq
 
 import simplejson
 
+from datetime import datetime
 from django.http import HttpResponse
 from django import forms
+from django.conf import settings
 
 from aanikone import utils
 from aanikone.votechecker.models import Election, Person
@@ -84,3 +86,7 @@ def test_serialize_errors_form_ok():
     testform = TestForm({'f': 'foo'})
     assert testform.is_valid()
     eq(utils.serialize_errors(testform.errors), {})
+
+def test_now():
+    settings.TEST_TIME = datetime(1900, 1, 1)
+    eq(utils.now(), datetime(1900, 1, 1))

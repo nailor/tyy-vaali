@@ -1,5 +1,7 @@
 import simplejson
 
+from datetime import datetime
+from django.conf import settings
 from django.http import HttpResponse
 from django.core import serializers
 
@@ -21,3 +23,8 @@ def serialize_errors(errors):
     # (which then can be consumed by simplejson).
     return dict(
         (key, [unicode(v) for v in values]) for key,values in errors.items())
+
+def now():
+    if hasattr(settings, 'TEST_TIME'):
+        return settings.TEST_TIME
+    return datetime.now()
