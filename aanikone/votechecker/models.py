@@ -61,9 +61,13 @@ class Person(models.Model):
     hetu = models.TextField()
 
     def __unicode__(self):
-        firstnames = self.firstname.split()
-        fn = ' '.join([x.capitalize() for x in firstnames])
-        return u'%s, %s' % (self.lastname.capitalize(), fn)
+        try: 
+            firstnames = self.firstname.split()
+            fn = ' '.join([x.capitalize() for x in firstnames])
+            return u'%s, %s' % (self.lastname.capitalize(), fn)
+        except AttributeError:
+            # Name missing?!
+            return unicode(self.personnumber)
 
 
     def check_vote(self):
