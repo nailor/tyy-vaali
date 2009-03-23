@@ -18,6 +18,7 @@ def test_unicode_person():
         )
     e.save()
     p = Person(
+        id=1,
         personnumber="123",
         electionname=e,
         lastname="bAR",
@@ -46,6 +47,7 @@ def test_check_vote_single_person_has_voted():
         )
     e.save()
     p = Person(
+        id=1,
         personnumber="123",
         electionname=e,
         lastname="bar",
@@ -75,6 +77,7 @@ def test_check_vote_single_person_has_not_voted():
         )
     e.save()
     p = Person(
+        id=1,
         personnumber="234",
         electionname=e,
         lastname="bar",
@@ -104,6 +107,7 @@ def test_check_vote_multi_person_has_not_voted():
         )
     e.save()
     p1 = Person(
+        id=4,
         personnumber="345",
         electionname=e,
         lastname="bar",
@@ -116,6 +120,7 @@ def test_check_vote_multi_person_has_not_voted():
         )
     p1.save()
     p = Person(
+        id=1,
         personnumber="p",
         electionname=e,
         lastname="bar",
@@ -144,6 +149,7 @@ def test_check_vote_multi_person_another_has_voted():
         )
     e.save()
     p1 = Person(
+        id=3,
         personnumber="p1",
         electionname=e,
         hasvoted=True,
@@ -153,6 +159,7 @@ def test_check_vote_multi_person_another_has_voted():
         )
     p1.save()
     p = Person(
+        id=1,
         personnumber="p2",
         electionname=e,
         hasvoted=False,
@@ -180,6 +187,7 @@ def test_vote_single_person():
         )
     e.save()
     p = Person(
+        id=1,
         personnumber="singlevote",
         electionname=e,
         address="...",
@@ -208,6 +216,7 @@ def test_vote_multi_person():
         )
     e.save()
     p1 = Person(
+        id=2,
         electionname=e,
         hasvoted=False,
         votestyle=0,
@@ -216,6 +225,7 @@ def test_vote_multi_person():
         )
     p1.save()
     p = Person(
+        id=1,
         electionname=e,
         lastname="bar2",
         firstname="foo2",
@@ -256,6 +266,7 @@ def test_person_find_ticket():
     e.save()
     p1 = Person(
         electionname=e,
+        id=1,
         hasvoted=True,
         votestyle=1,
         hetu='voted',
@@ -292,6 +303,7 @@ def test_person_multiple_find_ticket():
         )
     e.save()
     p1 = Person(
+        id=2,
         electionname=e,
         hasvoted=True,
         votestyle=1,
@@ -300,6 +312,7 @@ def test_person_multiple_find_ticket():
         )
     p1.save()
     p = Person(
+        id=1,
         electionname=e,
         lastname="bar2",
         firstname="foo2",
@@ -340,6 +353,7 @@ def test_person_no_ticket():
         )
     e.save()
     p1 = Person(
+        id=1,
         electionname=e,
         hasvoted=True,
         votestyle=1,

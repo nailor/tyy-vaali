@@ -42,7 +42,8 @@ def test_get_person_data():
         hasvoted=False,
         votestyle=1,
         hetu='foob',
-        organization='tse'
+        organization='tse',
+        id=1,
         )
     p.save()
     c = Client()
@@ -107,7 +108,7 @@ def test_get_person_data_no_data():
 def test_vote_empty_post():
     c = Client()
     response = c.post(
-        '/tarkistus/vote/',
+        '/tarkistus/commit/',
         {}
         )
     eq(response.status_code, 200)
@@ -150,13 +151,14 @@ def test_vote_single_already_voted_electronically():
         votestyle=2,
         votedate=datetime(2009,1,1,18,0),
         hetu='foob',
-        organization='tse.fi'
+        organization='tukkk.fi',
+        id=1,
         )
     p.save()
     c = Client()
     response = c.post(
-        '/tarkistus/vote/',
-        {'number': '1234', 'organization': 'tse.fi', 'place': 1}
+        '/tarkistus/commit/',
+        {'number': '1234', 'organization': 'tukkk.fi', 'place': 1}
         )
     eq(response.status_code, 200)
     try:
@@ -196,7 +198,8 @@ def test_vote_single_already_voted_on_paper():
         votestyle=1,
         votedate=datetime(2009,1,1,18,0),
         hetu='foob',
-        organization='tse.fi'
+        organization='tukkk.fi',
+        id=1,
         )
     p.save()
     ticket = Ticket(
@@ -207,8 +210,8 @@ def test_vote_single_already_voted_on_paper():
     ticket.save()
     c = Client()
     response = c.post(
-        '/tarkistus/vote/',
-        {'number': '1234', 'organization': 'tse.fi', 'place': 1}
+        '/tarkistus/commit/',
+        {'number': '1234', 'organization': 'tukkk.fi', 'place': 1}
         )
     eq(response.status_code, 200)
     try:
@@ -248,13 +251,14 @@ def test_vote_no_ticket():
         votestyle=1,
         votedate=datetime(2009,1,1,18,0),
         hetu='foob',
-        organization='tse.fi'
+        organization='tukkk.fi',
+        id=1,
         )
     p.save()
     c = Client()
     response = c.post(
-        '/tarkistus/vote/',
-        {'number': '1234', 'organization': 'tse.fi', 'place': 1}
+        '/tarkistus/commit/',
+        {'number': '1234', 'organization': 'tukkk.fi', 'place': 1}
         )
     eq(response.status_code, 200)
     try:
@@ -293,13 +297,14 @@ def test_vote_success_single():
         hasvoted=False,
         votestyle=1,
         hetu='foob',
-        organization='tse.fi'
+        organization='tukkk.fi',
+        id=1,
         )
     p.save()
     c = Client()
     response = c.post(
-        '/tarkistus/vote/',
-        {'number': '1234', 'organization': 'tse.fi', 'place': 1}
+        '/tarkistus/commit/',
+        {'number': '1234', 'organization': 'tukkk.fi', 'place': 1}
         )
     eq(response.status_code, 200)
     try:
@@ -341,7 +346,8 @@ def test_vote_return_slip():
         hasvoted=True,
         votestyle=0,
         hetu='foob',
-        organization='tse.fi'
+        organization='tukkk.fi',
+        id=1,
         )
     p.save()
     t = Ticket(
@@ -351,8 +357,8 @@ def test_vote_return_slip():
     t.save()
     c = Client()
     response = c.post(
-        '/tarkistus/vote/',
-        {'number': '1234', 'organization': 'tse.fi', 'place': 1}
+        '/tarkistus/commit/',
+        {'number': '1234', 'organization': 'tukkk.fi', 'place': 1}
         )
     eq(response.status_code, 200)
     try:
@@ -391,18 +397,19 @@ def test_vote_whole_procedure():
         )
     e.save()
     p = Person(
+        id=1,
         personnumber="1234",
         electionname=e,
         hasvoted=False,
         votestyle=0,
         hetu='foob',
-        organization='tse.fi'
+        organization='tukkk.fi'
         )
     p.save()
     c = Client()
     settings.TEST_TIME = datetime(1900, 1, 1)
-    response = c.post('/tarkistus/vote/',
-                      {'number': '1234', 'organization': 'tse.fi', 'place': 1})
+    response = c.post('/tarkistus/commit/',
+                      {'number': '1234', 'organization': 'tukkk.fi', 'place': 1})
     eq(response.status_code, 200)
     eq(response.content, simplejson.dumps({'ok': 'OK. Give ticket.'}))
     t = Ticket.objects.get(
@@ -413,8 +420,8 @@ def test_vote_whole_procedure():
         submit_time=None,
         )
     settings.TEST_TIME = datetime(1900, 1, 2)
-    response = c.post('/tarkistus/vote/',
-                      {'number': '1234', 'organization': 'tse.fi', 'place': 1})
+    response = c.post('/tarkistus/commit/',
+                      {'number': '1234', 'organization': 'tukkk.fi', 'place': 1})
     eq(response.status_code, 200)
     eq(response.content,
        simplejson.dumps({'ok': 'OK. Ticket can be stamped.'}))
@@ -426,8 +433,8 @@ def test_vote_whole_procedure():
         submit_time=datetime(1900, 1, 2),
         )
 
-    response = c.post('/tarkistus/vote/',
-                      {'number': '1234', 'organization': 'tse.fi', 'place': 1})
+    response = c.post('/tarkistus/commit/',
+                      {'number': '1234', 'organization': 'tukkk.fi', 'place': 1})
     eq(response.status_code, 200)
     eq(response.content,
        simplejson.dumps(
@@ -440,8 +447,9 @@ def test_vote_whole_procedure():
         hasvoted=True,
         votestyle=1,
         hetu='foob',
-        organization='tse.fi',
-        votedate=datetime(1900, 1, 2)
+        organization='tukkk.fi',
+        votedate=datetime(1900, 1, 2),
+        id=1,
         )
 
 def test_whois_get():
@@ -451,7 +459,7 @@ def test_whois_get():
 
 def test_vote_get():
     c = Client()
-    response = c.get('/tarkistus/vote/')
+    response = c.get('/tarkistus/commit/')
     eq(response.status_code, 405)
 
 def test_index_post():

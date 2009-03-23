@@ -6,7 +6,7 @@ admin.autodiscover()
 
 urlpatterns = patterns(
     '',
-    (r'^tarkistus/admin/(.*)', admin.site.root),
+    (r'^tarkistus/hallinta/(.*)', admin.site.root),
     (r'^tarkistus/', include('aanikone.votechecker.urls')),
 )
 

@@ -63,7 +63,7 @@ function handle_check(data, status) {
                     error: ajax_error,
                     success: handle_vote,
                     type: 'POST',
-                    url: '/tarkistus/vote/'
+                    url: '/tarkistus/commit/'
                 });
 
         }
