@@ -1,6 +1,9 @@
 from django.core import serializers
 from django.http import HttpResponseNotAllowed
 from django.utils.translation import ugettext as _
+from django.shortcuts import render_to_response
+from django.template import RequestContext
+
 from aanikone.utils import (
     serialized_json_response,
     json_response,
@@ -11,7 +14,12 @@ from aanikone.votechecker.forms import VoterForm
 from aanikone.utils import now
 
 def index(request):
-    pass
+    if request.method != 'GET':
+        return HttpResponseNotAllowed(['GET'])
+    return render_to_response(
+        'index.html',
+        context_instance=RequestContext(request),
+        )
 
 def whois(request):
     if request.method != 'POST':

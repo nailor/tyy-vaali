@@ -10,6 +10,14 @@
    </head>
    <body>
      <div id="mainpanel">
+       <div id="location">
+         Äänestyspiste:
+         <select name="location">
+           {% for location in locations %}
+           <option value="{{ location.id }}">{{ location.name }}</option>
+           {% endfor %}
+         </select>
+       </div>
        <noscript>Javascript vaaditaan tällä sivulla!</noscript>
        <h1>Syötä opiskelijanumero</h1>
        <div id="opnropanel">

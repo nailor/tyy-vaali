@@ -47,7 +47,7 @@ def test_get_person_data():
     p.save()
     c = Client()
     response = c.post(
-        '/votechecker/whois/',
+        '/tarkistus/whois/',
         {'number': '123',
          'organization': 'tse',
          'place': 1,}
@@ -69,7 +69,7 @@ def test_get_person_data_error():
     t.save()
     c = Client()
     response = c.post(
-        '/votechecker/whois/',
+        '/tarkistus/whois/',
         {'number': '123',
          'organization': 'tse',
          'place': 1}
@@ -88,7 +88,7 @@ def test_get_person_data_error():
 def test_get_person_data_no_data():
     c = Client()
     response = c.post(
-        '/votechecker/whois/',
+        '/tarkistus/whois/',
         {}
         )
     eq(response.status_code, 200)
@@ -107,7 +107,7 @@ def test_get_person_data_no_data():
 def test_vote_empty_post():
     c = Client()
     response = c.post(
-        '/votechecker/vote/',
+        '/tarkistus/vote/',
         {}
         )
     eq(response.status_code, 200)
@@ -155,7 +155,7 @@ def test_vote_single_already_voted_electronically():
     p.save()
     c = Client()
     response = c.post(
-        '/votechecker/vote/',
+        '/tarkistus/vote/',
         {'number': '1234', 'organization': 'tse.fi', 'place': 1}
         )
     eq(response.status_code, 200)
@@ -207,7 +207,7 @@ def test_vote_single_already_voted_on_paper():
     ticket.save()
     c = Client()
     response = c.post(
-        '/votechecker/vote/',
+        '/tarkistus/vote/',
         {'number': '1234', 'organization': 'tse.fi', 'place': 1}
         )
     eq(response.status_code, 200)
@@ -253,7 +253,7 @@ def test_vote_no_ticket():
     p.save()
     c = Client()
     response = c.post(
-        '/votechecker/vote/',
+        '/tarkistus/vote/',
         {'number': '1234', 'organization': 'tse.fi', 'place': 1}
         )
     eq(response.status_code, 200)
@@ -298,7 +298,7 @@ def test_vote_success_single():
     p.save()
     c = Client()
     response = c.post(
-        '/votechecker/vote/',
+        '/tarkistus/vote/',
         {'number': '1234', 'organization': 'tse.fi', 'place': 1}
         )
     eq(response.status_code, 200)
@@ -351,7 +351,7 @@ def test_vote_return_slip():
     t.save()
     c = Client()
     response = c.post(
-        '/votechecker/vote/',
+        '/tarkistus/vote/',
         {'number': '1234', 'organization': 'tse.fi', 'place': 1}
         )
     eq(response.status_code, 200)
@@ -401,7 +401,7 @@ def test_vote_whole_procedure():
     p.save()
     c = Client()
     settings.TEST_TIME = datetime(1900, 1, 1)
-    response = c.post('/votechecker/vote/',
+    response = c.post('/tarkistus/vote/',
                       {'number': '1234', 'organization': 'tse.fi', 'place': 1})
     eq(response.status_code, 200)
     eq(response.content, simplejson.dumps({'ok': 'OK. Give ticket.'}))
@@ -413,7 +413,7 @@ def test_vote_whole_procedure():
         submit_time=None,
         )
     settings.TEST_TIME = datetime(1900, 1, 2)
-    response = c.post('/votechecker/vote/',
+    response = c.post('/tarkistus/vote/',
                       {'number': '1234', 'organization': 'tse.fi', 'place': 1})
     eq(response.status_code, 200)
     eq(response.content,
@@ -426,7 +426,7 @@ def test_vote_whole_procedure():
         submit_time=datetime(1900, 1, 2),
         )
 
-    response = c.post('/votechecker/vote/',
+    response = c.post('/tarkistus/vote/',
                       {'number': '1234', 'organization': 'tse.fi', 'place': 1})
     eq(response.status_code, 200)
     eq(response.content,
@@ -446,10 +446,21 @@ def test_vote_whole_procedure():
 
 def test_whois_get():
     c = Client()
-    response = c.get('/votechecker/whois/')
+    response = c.get('/tarkistus/whois/')
     eq(response.status_code, 405)
 
 def test_vote_get():
     c = Client()
-    response = c.get('/votechecker/vote/')
+    response = c.get('/tarkistus/vote/')
     eq(response.status_code, 405)
+
+def test_index_post():
+    c = Client()
+    response = c.post('/tarkistus/')
+    eq(response.status_code, 405)
+
+def test_index_get():
+    c = Client()
+    response = c.get('/tarkistus/')
+    eq(response.status_code, 200)
+
