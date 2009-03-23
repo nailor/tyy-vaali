@@ -39,9 +39,10 @@ def vote(request):
     if f.person.check_vote():
         if f.person.votestyle >= 2:
             errors = {'__all__': [
-                    _('Person has voted electronically on %s') % (
-                        f.person.votedate.strftime('%d.%m.%Y at %H:%M')
-                        )
+                    _('Person has voted electronically on %(day)s at %(time)s') % {
+                        'day': f.person.votedate.strftime('%d.%m.%Y'),
+                        'time': f.person.votedate.strftime('%H:%M')
+                        }
                     ]}
         elif f.person.votestyle == 1:
             ticket = f.person.get_ticket()
@@ -52,10 +53,11 @@ def vote(request):
             else:
                 ticket = ticket[0]
                 errors = {'__all__': [
-                        _('Person has voted in %s on %s') % (
-                            ticket.release_place,
-                            f.person.votedate.strftime('%d.%m.%Y at %H:%M')
-                            )]}
+                        _('Person has voted in %(place)s on %(day)s at %(time)s') % {
+                            'place': ticket.release_place,
+                            'day': f.person.votedate.strftime('%d.%m.%Y'),
+                            'time': f.person.votedate.strftime('%H:%M'),
+                            }]}
         else:
             # Case: Person has received the slip but has not returned it
             ticket = f.person.get_ticket()

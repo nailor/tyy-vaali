@@ -1,0 +1,96 @@
+# Finnish translation of Tyy-vaali.
+# Copyright (C) 2009 Jyrki Pulliainen
+# This file is distributed under the same license as the Tyy-vaali package.
+# Jyrki Pulliainen <jyrki@dywypi.org>, 2009.
+# , fuzzy
+# jyrki <jyrki@dywypi.org>, 2009.
+#
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Tyy-vaali 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-03-23 22:51+0200\n"
+"PO-Revision-Date: 2009-03-23 22:52+0200\n"
+"Last-Translator: Jyrki Pulliainen <jyrki@dywypi.org>\n"
+"Language-Team: Finnish\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: Finnish\n"
+"X-Poedit-Country: FINLAND\n"
+
+#: votechecker/forms.py:21
+msgid "Invalid student number"
+msgstr "Virheellinen opiskelijanumero"
+
+#: votechecker/forms.py:30
+msgid "Invalid place."
+msgstr "Virheellinen paikkavalinta."
+
+#: votechecker/models.py:146
+msgid "name"
+msgstr "nimi"
+
+#: votechecker/models.py:147
+msgid "description"
+msgstr "kuvaus"
+
+#: votechecker/models.py:153
+msgid "voting place"
+msgstr "äänestyspiste"
+
+#: votechecker/models.py:154
+msgid "voting places"
+msgstr "äänestyspisteet"
+
+#: votechecker/models.py:159
+msgid "voter"
+msgstr "äänestäjä"
+
+#: votechecker/models.py:163
+msgid "release place"
+msgstr "luovutuspiste"
+
+#: votechecker/models.py:165
+msgid "release time"
+msgstr "luovutusaika"
+
+#: votechecker/models.py:167
+msgid "submit time"
+msgstr "vastaanottoaika"
+
+#: votechecker/models.py:169
+msgid "submit place"
+msgstr "vastaanottopaikka"
+
+#: votechecker/models.py:179
+msgid "ticket"
+msgstr "lippu"
+
+#: votechecker/models.py:180
+msgid "tickets"
+msgstr "liput"
+
+#: votechecker/views.py:42
+#, python-format
+msgid "Person has voted electronically on %(day)s at %(time)s"
+msgstr "Henkilö on jo äänestänyt sähköisesti %(day)s klo %(time)s"
+
+#: votechecker/views.py:52
+#: votechecker/views.py:67
+msgid "Person has already voted."
+msgstr "Henkilö on jo äänestänyt."
+
+#: votechecker/views.py:56
+#, python-format
+msgid "Person has voted in %(place)s on %(day)s at %(time)s"
+msgstr "Henkilö on jo äänestänyt. (%(place)s, %(day)s klo %(time)s)"
+
+#: votechecker/views.py:77
+msgid "OK. Give ticket."
+msgstr "OK! Voit luovuttaa lipun"
+
+#~ msgid "%d.%m.%Y at %H:%M"
+#~ msgstr "%d.%m.%Y klo %H:%M"
+
