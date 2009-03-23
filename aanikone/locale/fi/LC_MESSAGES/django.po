@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Tyy-vaali 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-03-23 22:51+0200\n"
-"PO-Revision-Date: 2009-03-23 22:52+0200\n"
+"POT-Creation-Date: 2009-03-23 23:42+0200\n"
+"PO-Revision-Date: 2009-03-23 23:43+0200\n"
 "Last-Translator: Jyrki Pulliainen <jyrki@dywypi.org>\n"
 "Language-Team: Finnish\n"
 "MIME-Version: 1.0\n"
@@ -86,6 +86,10 @@ msgstr "Henkilö on jo äänestänyt."
 #, python-format
 msgid "Person has voted in %(place)s on %(day)s at %(time)s"
 msgstr "Henkilö on jo äänestänyt. (%(place)s, %(day)s klo %(time)s)"
+
+#: votechecker/views.py:74
+msgid "OK. Ticket can be stamped."
+msgstr "OK! Leimaa lippu!"
 
 #: votechecker/views.py:77
 msgid "OK. Give ticket."
