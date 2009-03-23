@@ -67,6 +67,13 @@ def vote(request):
                 errors = {'__all__': [_('Person has already voted.')]}
             else:
                 ticket = ticket[0]
+                if ticket.release_place != f.place:
+                    return json_response(
+                        {'errors': {
+                                '__all__': [
+                                    _('Error! Ticket is from %s, not here!') % (
+                                        ticket.release_place.name)
+                                    ]}})
                 f.person.vote()
                 ticket.submit_place = f.place
                 ticket.submit_time = now()

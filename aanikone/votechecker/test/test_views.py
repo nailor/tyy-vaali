@@ -320,6 +320,64 @@ def test_vote_success_single():
     verify_p = Person.objects.get(personnumber='1234')
     assert verify_p.hasvoted
 
+def test_vote_different_submit():
+    place = Place(
+        name="Testplace",
+        description="foo",
+        )
+    place.save()
+    splace = Place(name='Submit')
+    splace.save()
+    e = Election(
+        name="testelect",
+        password="foo",
+        authurl="bar",
+        isopen=True,
+        production=True,
+        ispublic=True,
+        firstpassword=True,
+        secondpassword=True,
+        stv=True,
+        government=True,
+        toelect=100,
+        )
+    e.save()
+    p = Person(
+        personnumber="1234",
+        electionname=e,
+        hasvoted=True,
+        votestyle=0,
+        hetu='foob',
+        organization='tukkk.fi',
+        id=1,
+        )
+    p.save()
+    t = Ticket(
+        voter=p,
+        release_place=place,
+        )
+    t.save()
+    c = Client()
+    response = c.post(
+        '/tarkistus/commit/',
+        {'number': '1234', 'organization': 'tukkk.fi', 'place': 2}
+        )
+    eq(response.status_code, 200)
+    try:
+        c = simplejson.loads(response.content)
+    except ValueError, e:
+        print response.content
+        raise
+    eq(c, {'errors': {'__all__': [
+                    'Error! Ticket is from Testplace, not here!']}})
+    tickets = Ticket.objects.all()
+    eq(len(tickets), 1)
+    eq(tickets[0].voter.id, p.id)
+    eq(tickets[0].submit_place, None)
+
+    verify_p = Person.objects.get(personnumber='1234')
+    assert verify_p.hasvoted
+
 def test_vote_return_slip():
     place = Place(
         name="Testplace",
@@ -565,3 +623,98 @@ def view_empty_tickets_list():
     response = c.get('/tarkistus/list/%d/' % place.id)
     eq(response.status_code, 200)
     eq(response.content, simplejson.dump([]))
+
+def test_vote_success_different_orgs_same_person():
+    settings.TEST_TIME = datetime(1923, 1, 3)
+    place = Place(
+        name="Testplace",
+        description="foo",
+        )
+    place.save()
+    e = Election(
+        name="testelect",
+        password="foo",
+        authurl="bar",
+        isopen=True,
+        production=True,
+        ispublic=True,
+        firstpassword=True,
+        secondpassword=True,
+        stv=True,
+        government=True,
+        toelect=100,
+        )
+    e.save()
+    p = Person(
+        personnumber="1234",
+        electionname=e,
+        hasvoted=False,
+        votestyle=0,
+        hetu='foob',
+        organization='tukkk.fi',
+        id=1,
+        )
+    p.save()
+    p1 = Person(
+        personnumber="2345",
+        electionname=e,
+        hasvoted=False,
+        votestyle=0,
+        hetu='foob',
+        organization='utu.fi',
+        id=2,
+        )
+    p1.save()
+    c = Client()
+    response = c.post(
+        '/tarkistus/commit/',
+        {'number': '1234', 'organization': 'tukkk.fi', 'place': 1}
+        )
+    eq(response.status_code, 200)
+    try:
+        cont = simplejson.loads(response.content)
+    except ValueError, e:
+        print response.content
+        raise
+    eq(cont, {'ok': 'OK. Give ticket.'})
+
+    verify_p = Person.objects.get(personnumber='2345')
+    assert verify_p.hasvoted
+
+    response = c.post(
+        '/tarkistus/commit/',
+        {'number': '2345', 'organization': 'utu.fi', 'place': 1}
+        )
+    eq(response.status_code, 200)
+    try:
+        cont = simplejson.loads(response.content)
+    except ValueError, e:
+        print response.content
+        raise
+    eq(cont, {'ok': 'OK. Ticket can be stamped.'})
+
+    response = c.post(
+        '/tarkistus/commit/',
+        {'number': '2345', 'organization': 'utu.fi', 'place': 1}
+        )
+    eq(response.status_code, 200)
+    try:
+        cont = simplejson.loads(response.content)
+    except ValueError, e:
+        print response.content
+        raise
+    eq(cont['errors']['__all__'][0],
+       'Person has voted in Testplace on 03.01.1923 at 00:00')
+
+    response = c.post(
+        '/tarkistus/commit/',
+        {'number': '1234', 'organization': 'tukkk.fi', 'place': 1}
+        )
+    eq(response.status_code, 200)
+    try:
+        cont = simplejson.loads(response.content)
+    except ValueError, e:
+        print response.content
+        raise
+    eq(cont['errors']['__all__'][0],
+       'Person has voted in Testplace on 03.01.1923 at 00:00')
