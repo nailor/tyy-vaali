@@ -4,41 +4,53 @@
    <head>
       <title>Äänioikeden tarkastusjärjestelmä</title>
       <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-      <link rel="stylesheet" type="text/css" href="../media/css/aanikone.css">
-      <script type="text/javascript" src="../media/js/jquery.js"></script>
-      <script type="text/javascript" src="../media/js/aanikone.js"></script>
+      <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL}}css/aanikone.css">
+      <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.js"></script>
+      <script type="text/javascript" src="{{ MEDIA_URL }}js/aanikone.js"></script>
    </head>
    <body>
      <div id="mainpanel">
        <div id="location">
          Äänestyspiste:
-         <select name="location">
-           {% for location in locations %}
+         <span class="loc"></span>
+         <select name="place">
+           <option value="">-- valitse äänestyspiste --</option>
+           {% for location in places %}
            <option value="{{ location.id }}">{{ location.name }}</option>
            {% endfor %}
          </select>
+         <span id="location-change">
+           (<a href="javascript:;">vaihda</a>)
+         </span>
        </div>
        <noscript>Javascript vaaditaan tällä sivulla!</noscript>
-       <h1>Syötä opiskelijanumero</h1>
+       <h2>Äänioikeuden tarkastaminen</h2>
+       <span id="statusdata">Syötä opiskelijanumero</span>
+       <span id="ajaxerror">
+         Virhe tapahtui! Mikäli tämä toistuu, ota yhteyttä päivystäjään!
+         (<a href="javascript:;">piilota</a>)
+       </span>
        <div id="opnropanel">
-         <input type="text" id="opnrofield" name="opnro" disabled="disabled" size="7">
+         <input type="text" id="opnrofield" name="number" disabled="disabled" size="7">
        </div>
        <span id="submitnagger">Valitse oppilaitos!</span>
        <div id="submits">
-         <button type="button">
+         <button type="button" id="utu.fi" name="organization">
            <img alt="TYY:n logo" src="../media/img/tyylogo_small.jpg">
            TYY
          </button>
-         <button type="button">
+         <button type="button" id="tse.fi" name="organization">
            <img alt="TuKY:n logo" src="../media/img/tukylogo_small.jpg">
            TuKY
          </button>
        </div>
        <div id="logindata">
-         <p>Olet kirjautunut nimellä Jyrki
-           Pulliainen. <a href="./logout/">Kirjaudu ulos</a>
+         <p>
+           Olet kirjautunut nimellä {{ user.first_name }} {{ user.last_name }}
+           ({{ user.username }}) <a href="./logout/">Kirjaudu ulos</a>
          </p>
        </div>
      </div>
+     <img id="ajax-loader" src="{{ MEDIA_URL }}img/ajax-loader.gif" alt="">
    </body>
 </html>

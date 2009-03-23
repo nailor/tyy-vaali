@@ -44,6 +44,7 @@ class Person(models.Model):
     universities.
 
     """
+    id = models.IntegerField(primary_key=True)
     electionname = models.ForeignKey(Election, db_column='electionname')
     personnumber = models.TextField()
     organization = models.TextField()
@@ -140,11 +141,10 @@ class Person(models.Model):
     class Meta:
         db_table = u'person'
         ordering = ['lastname', 'firstname']
-        unique_together = ('electionname', 'personnumber', 'organization')
 
 class Place(models.Model):
     name = models.CharField(_(u'name'), max_length=500)
-    description = models.TextField(_(u'description'))
+    description = models.TextField(_(u'description'), null=True, blank=True)
 
     def __unicode__(self):
         return self.name
@@ -155,7 +155,10 @@ class Place(models.Model):
         ordering = ['name',]
 
 class Ticket(models.Model):
-    voter = models.ForeignKey(Person, verbose_name=_(u'voter'), unique=True)
+    voter = models.ForeignKey(Person,
+                              verbose_name=_(u'voter'),
+                              unique=True,
+                              to_field='id')
     release_place = models.ForeignKey(Place,
                                       verbose_name=_(u'release place'),
                                       related_name='released_tickets')

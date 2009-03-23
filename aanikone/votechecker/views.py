@@ -9,7 +9,7 @@ from aanikone.utils import (
     json_response,
     serialize_errors,
     )
-from aanikone.votechecker.models import Person, Ticket
+from aanikone.votechecker.models import Person, Ticket, Place
 from aanikone.votechecker.forms import VoterForm
 from aanikone.utils import now
 
@@ -18,6 +18,7 @@ def index(request):
         return HttpResponseNotAllowed(['GET'])
     return render_to_response(
         'index.html',
+        {'places': Place.objects.all(),},
         context_instance=RequestContext(request),
         )
 

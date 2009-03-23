@@ -12,6 +12,7 @@ html, body {
   margin-left: auto;
   margin-right: auto;
   margin-top: 100px;
+  padding-top: 2px;
   width: 500px;
   text-align: center;
   border: 3px solid #005a9b;
@@ -44,6 +45,29 @@ noscript {
   margin: 5px;
 }
 
-#submits.error button {
+#submits.error button, input.error, button.error {
   border: 1px solid red;
+}
+#location {
+  height: 20px;
+}
+#location span.loc {
+  font-weight: bold;
+}
+#location-change {
+  font-weight: normal;
+  font-size: smaller;
+}
+#statusdata {
+  color: #aaa;
+  font-size: smaller;
+  height: 20px;
+  display: inline-block;
+  vertical-align: center;
+}
+#ajaxerror {
+  color: red;
+  font-size: smaller;
+  font-weight: bolder;
+  display: inline-block;
 }

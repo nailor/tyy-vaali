@@ -464,3 +464,10 @@ def test_index_get():
     response = c.get('/tarkistus/')
     eq(response.status_code, 200)
 
+def test_index_voteplace():
+    c = Client()
+    p = Place(name='Foobarland')
+    p.save()
+    response = c.get('/tarkistus/')
+    eq(response.status_code, 200)
+    assert 'Foobarland' in response.content
