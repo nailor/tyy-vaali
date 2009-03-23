@@ -1,3 +1,45 @@
+function o2token(org) {
+    if (org == 'utu.fi')
+        return 'TYY';
+    return "TuKY";
+}
+
+function select_ticket() {
+    var a = $(this);
+    $('#opnrofield').val(a.data('number'));
+    // Can't use #utu.fi here, it causes jqeury to look out for
+    // id utu with class fi.
+    // This here is a somewhat performance loss, but...
+    $('[id=' + a.data('org') + ']').click();
+}
+
+function update_ticket_list() {
+    function _got(data, status) {
+        var ul = $('<ul></ul>');
+        for (var i=0; i<data.length; i++) {
+            var li = $('<li></li>');
+            var a = $('<a href="javascript:;"></a>');
+            var text = o2token(data[i].organization);
+            text += ' / ' + data[i].number;
+            a.text(text);
+            a.click(select_ticket);
+            a.data('number', data[i].number);
+            a.data('org', data[i].organization);
+            a.appendTo(li);
+            li.appendTo(ul);
+        }
+        $('#voterspanel ul').replaceWith(ul);
+    }
+    $.ajax(
+        {
+            dataType: 'json',
+            error: ajax_error,
+            success: _got,
+            type: 'GET',
+            url: '/tarkistus/list/' + $('#location').data('loc') + '/'
+        });
+}
+
 function o2str(org) {
     if (org == 'utu.fi') {
         return 'Turun yliopisto';
@@ -15,6 +57,9 @@ function enable() {
     $('button').removeAttr('disabled');
     $('#opnrofield').removeAttr('disabled');
     $('#opnrofield').focus();
+    /* Done here, the list keeps up to date unless there's
+     * simultaneous vote checkers in the same location. */
+     update_ticket_list();
 }
 function ajax_error(data, status) {
     $('#ajaxerror').show();

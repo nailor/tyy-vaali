@@ -75,3 +75,12 @@ noscript {
   font-weight: bolder;
   display: inline-block;
 }
+#voterspanel ul {
+  list-display-type: none;
+  margin: 10 auto;
+  padding: 0;
+}
+#voterspanel li {
+  margin: 0;
+  list-style-type: none;
+}
