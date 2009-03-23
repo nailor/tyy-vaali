@@ -143,5 +143,5 @@ $(document).ready(
             function() {
                 $(this).parent().hide();
             });
-        $('#opnrofield').focus(function() { $(this).select()});
+        $('#opnrofield').focus(function() { $(this).select(); });
     });
