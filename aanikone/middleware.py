@@ -20,6 +20,8 @@ class ShibbolethMiddleware(object):
             else:
                 username, domain = request.META['HTTP_MAIL'].split('@')
             user = User.objects.get(username=username)
+            user.first_name = request.META['HTTP_DISPLAYNAME']
+            user.last_name = request.META['HTTP_SN']
             request.__class__.user = user
         except User.DoesNotExist:
             content = 'You fail.'
