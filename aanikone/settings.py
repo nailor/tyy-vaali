@@ -91,3 +91,5 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'aanikone.votechecker',
 )
+
+AUTHENTICATION_BACKENDS = ('aanikone.auth.ShibbolethBackend',)
