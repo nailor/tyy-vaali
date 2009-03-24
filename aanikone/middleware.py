@@ -24,5 +24,5 @@ class ShibbolethMiddleware(object):
         except User.DoesNotExist:
             content = 'You fail.'
             if settings.DEBUG:
-                content = content + '\n'.join(dir(request.META))
+                content = request.META.items()
             return HttpResponseForbidden(content)
