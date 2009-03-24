@@ -14,6 +14,10 @@ class ShibbolethMiddleware(object):
         username@utu.fi.
 
         """
+        if request.user:
+            # User might have logged through the admin interface,
+            # don't change username
+            return
         try:
             if 'HTTP_UID' in request.META and request.META['HTTP_UID']:
                 username = request.META['HTTP_UID']
