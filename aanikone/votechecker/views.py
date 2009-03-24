@@ -100,7 +100,7 @@ def ticket_list(request, place_id):
     return json_response(result)
 
 def logout(request):
-    response = HttpResponseRedirect(request.META['HTTP_SHIB_LOGOUT_URL'])
+    response = HttpResponseRedirect(request.META['HTTP_HAKALOGOUTURL'])
     for key, value in request.COOKIES.iteritems():
         response.delete_cookie(key)
     return response
