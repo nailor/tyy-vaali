@@ -21,7 +21,7 @@ class ShibbolethMiddleware(object):
                 username, domain = request.META['mail'].split('@')
             user = User.objects.get(username=username)
             request.__class__.user = user
-        except:
+        except User.DoesNotExist:
             content = 'You fail.'
             if settings.DEBUG:
                 content = content + dir(request.META)
