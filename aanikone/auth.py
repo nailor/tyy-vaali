@@ -16,8 +16,10 @@ class ShibbolethBackend(object):
             else:
                 username, domain = request.META['HTTP_MAIL'].split('@')
             user = User.objects.get(username=username)
-            user.first_name = request.META['HTTP_DISPLAYNAME']
-            user.last_name = request.META['HTTP_SN']
+            if not user.first_name or user.last_name:
+                user.first_name = request.META['HTTP_DISPLAYNAME']
+                user.last_name = request.META['HTTP_SN']
+                user.save()
             return user
         except User.DoesNotExist:
             return None

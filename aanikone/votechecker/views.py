@@ -1,9 +1,14 @@
 from django.core import serializers
-from django.http import HttpResponseNotAllowed, HttpResponseRedirect
+from django.http import (
+    HttpResponseNotAllowed,
+    HttpResponseRedirect,
+    HttpResponseForbidden,
+    )
 from django.utils.translation import ugettext as _
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
-
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login
 from aanikone.utils import (
     serialized_json_response,
     json_response,
@@ -13,6 +18,7 @@ from aanikone.votechecker.models import Person, Ticket, Place
 from aanikone.votechecker.forms import VoterForm
 from aanikone.utils import now
 
+@login_required
 def index(request):
     if request.method != 'GET':
         return HttpResponseNotAllowed(['GET'])
@@ -22,6 +28,7 @@ def index(request):
         context_instance=RequestContext(request),
         )
 
+@login_required
 def whois(request):
     if request.method != 'POST':
         return HttpResponseNotAllowed(['POST'])
@@ -30,6 +37,7 @@ def whois(request):
         return serialized_json_response([f.person])
     return json_response({'errors': serialize_errors(f.errors)})
 
+@login_required
 def vote(request):
     if request.method != 'POST':
         return HttpResponseNotAllowed(['POST'])
@@ -83,6 +91,7 @@ def vote(request):
     f.person.give_slip(f.place)
     return json_response({'ok': _('OK. Give ticket.')})
 
+@login_required
 def ticket_list(request, place_id):
     place = get_object_or_404(Place, pk=place_id)
     tickets = place.find_open_tickets()
@@ -99,8 +108,16 @@ def ticket_list(request, place_id):
     result.sort(key=lambda x: x['number'])
     return json_response(result)
 
+@login_required
 def logout(request):
     response = HttpResponseRedirect(request.META['HTTP_HAKALOGOUTURL'])
     for key, value in request.COOKIES.iteritems():
         response.delete_cookie(key)
     return response
+
+def login_view(request):
+    user = authenticate(request=request)
+    if user is None:
+        return HttpResponseForbidden()
+    login(request, user)
+    return HttpResponseRedirect(request.GET['next'])

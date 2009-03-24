@@ -7,4 +7,5 @@ urlpatterns = patterns(
     (r'^commit/$', 'vote'),
     (r'^list/([0-9]*)/$', 'ticket_list'),
     (r'^logout/$', 'logout'),
+    (r'^login/$', 'login_view'),
 )

@@ -93,3 +93,5 @@ INSTALLED_APPS = (
 )
 
 AUTHENTICATION_BACKENDS = ('aanikone.auth.ShibbolethBackend',)
+
+LOGIN_URL = '/tarkistus/login/'
