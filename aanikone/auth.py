@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 class ShibbolethBackend(object):
     "Authenticate against Tse/Utu Shibboleth."
 
-    def authenticate(self, request=request):
+    def authenticate(self, request):
         """Authenticate user against the data from Shibboleth.
 
         Tse provides HTTP_UID in the response, Utu provides HTTP_MAIL
