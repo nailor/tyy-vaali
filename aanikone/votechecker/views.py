@@ -1,5 +1,5 @@
 from django.core import serializers
-from django.http import HttpResponseNotAllowed
+from django.http import HttpResponseNotAllowed, HttpResponseRedirect
 from django.utils.translation import ugettext as _
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
@@ -98,3 +98,9 @@ def ticket_list(request, place_id):
     # of time to ponder the Django ORM any more
     result.sort(key=lambda x: x['number'])
     return json_response(result)
+
+def logout(request):
+    response = HttpResponseRedirect(request.META['HTTP_SHIB_LOGOUT_URL'])
+    for key, value in request.COOKIES.iteritems():
+        response.delete_cookie(key)
+    return response

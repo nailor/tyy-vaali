@@ -6,4 +6,5 @@ urlpatterns = patterns(
     (r'^whois/$', 'whois'),
     (r'^commit/$', 'vote'),
     (r'^list/([0-9]*)/$', 'ticket_list'),
+    (r'^logout/$', 'logout'),
 )
