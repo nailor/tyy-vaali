@@ -18,7 +18,7 @@ class ShibbolethMiddleware(object):
             if 'uid' in request.META:
                 username = request.META['uid']
             else:
-                username, domain = request.META['mail'].split('@')
+                username, domain = request.META['HTTP_MAIL'].split('@')
             user = User.objects.get(username=username)
             request.__class__.user = user
         except User.DoesNotExist:
