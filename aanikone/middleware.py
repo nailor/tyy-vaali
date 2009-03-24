@@ -1,4 +1,5 @@
 from django.http import HttpResponseForbidden
+from django.conf import settings
 from django.contrib.auth.models import User
 
 class ShibbolethMiddleware(object):
@@ -22,6 +23,6 @@ class ShibbolethMiddleware(object):
             request.__class__.user = user
         except:
             content = 'You fail.'
-            if DEBUG:
+            if settings.DEBUG:
                 content = content + dir(request.META)
             return HttpResponseForbidden(content)
