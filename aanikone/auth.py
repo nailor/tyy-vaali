@@ -26,6 +26,6 @@ class ShibbolethBackend(object):
 
     def get_user(self, user_id):
         try:
-            User.objects.get(username=user_id)
+            return User.objects.get(username=user_id)
         except User.DoesNotExist:
             return None

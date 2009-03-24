@@ -118,6 +118,6 @@ def logout(request):
 def login_view(request):
     user = authenticate(request=request)
     if user is None:
-        return HttpResponseForbidden()
+        return HttpResponseForbidden('You fail :(')
     login(request, user)
-    return HttpResponseRedirect(request.GET['next'])
+    return HttpResponseRedirect('/tarkistus/')
