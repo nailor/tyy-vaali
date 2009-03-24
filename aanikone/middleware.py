@@ -21,4 +21,7 @@ class ShibbolethMiddleware(object):
             user = User.objects.get(username=username)
             request.__class__.user = user
         except:
-            return HttpResponseForbidden('You fail.')
+            content = 'You fail.'
+            if DEBUG:
+                content = content + dir(request.META)
+            return HttpResponseForbidden(content)
