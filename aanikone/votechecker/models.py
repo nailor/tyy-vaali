@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.translation import ugettext as _
+from django.contrib.auth.models import User
 
 from aanikone.utils import now
 
@@ -115,7 +116,7 @@ class Person(models.Model):
                 return p.ticket_set.all()
         return None
 
-    def give_slip(self, place):
+    def give_slip(self, place, user):
         """Give person a voting slip and mark person as voted.
 
         This prevents the electronical voting from working. Votestyle
@@ -139,6 +140,7 @@ class Person(models.Model):
             t = Ticket(
                 voter=self,
                 release_place=place,
+                releaser=user,
                 )
             t.save()
 
@@ -174,11 +176,15 @@ class Ticket(models.Model):
                                       related_name='released_tickets')
     release_time = models.DateTimeField(_(u'release time'),
                                         default=now)
+    releaser = models.ForeignKey(User, related_name='releaser')
+
     submit_time = models.DateTimeField(_(u'submit time'), null=True)
     submit_place = models.ForeignKey(Place,
                                      verbose_name=_(u'submit place'),
                                      related_name='submitted_tickets',
                                      null=True)
+    submitter = models.ForeignKey(User, related_name='submitter', null=True,
+                                  blank=True)
 
     def __unicode__(self):
         return u'%s, %s (%s)' % (str(self.voter).decode('utf-8'),

@@ -1,5 +1,7 @@
 from nose.tools import eq_ as eq
 from django.test.client import Client
+from django.contrib.auth.models import User
+from django.http import HttpRequest
 
 import simplejson
 
@@ -47,6 +49,14 @@ def test_get_person_data():
         )
     p.save()
     c = Client()
+    User(username='admin', password='pass').save()
+
+    fake_request = HttpRequest()
+    fake_request.META['HTTP_MAIL'] = 'admin@utu.fi'
+    fake_request.META['HTTP_DISPLAYNAME'] = ''
+    fake_request.META['HTTP_SN'] = ''
+
+    c.login(request=fake_request)
     response = c.post(
         '/tarkistus/whois/',
         {'number': '123',
@@ -69,6 +79,14 @@ def test_get_person_data_error():
         )
     t.save()
     c = Client()
+    User(username='admin', password='pass').save()
+
+    fake_request = HttpRequest()
+    fake_request.META['HTTP_MAIL'] = 'admin@utu.fi'
+    fake_request.META['HTTP_DISPLAYNAME'] = ''
+    fake_request.META['HTTP_SN'] = ''
+
+    c.login(request=fake_request)
     response = c.post(
         '/tarkistus/whois/',
         {'number': '123',
@@ -88,6 +106,14 @@ def test_get_person_data_error():
 
 def test_get_person_data_no_data():
     c = Client()
+    User(username='admin', password='pass').save()
+
+    fake_request = HttpRequest()
+    fake_request.META['HTTP_MAIL'] = 'admin@utu.fi'
+    fake_request.META['HTTP_DISPLAYNAME'] = ''
+    fake_request.META['HTTP_SN'] = ''
+
+    c.login(request=fake_request)
     response = c.post(
         '/tarkistus/whois/',
         {}
@@ -107,6 +133,14 @@ def test_get_person_data_no_data():
 
 def test_vote_empty_post():
     c = Client()
+    User(username='admin', password='pass').save()
+
+    fake_request = HttpRequest()
+    fake_request.META['HTTP_MAIL'] = 'admin@utu.fi'
+    fake_request.META['HTTP_DISPLAYNAME'] = ''
+    fake_request.META['HTTP_SN'] = ''
+
+    c.login(request=fake_request)
     response = c.post(
         '/tarkistus/commit/',
         {}
@@ -156,6 +190,14 @@ def test_vote_single_already_voted_electronically():
         )
     p.save()
     c = Client()
+    User(username='admin', password='pass').save()
+
+    fake_request = HttpRequest()
+    fake_request.META['HTTP_MAIL'] = 'admin@utu.fi'
+    fake_request.META['HTTP_DISPLAYNAME'] = ''
+    fake_request.META['HTTP_SN'] = ''
+
+    c.login(request=fake_request)
     response = c.post(
         '/tarkistus/commit/',
         {'number': '1234', 'organization': 'tukkk.fi', 'place': 1}
@@ -202,13 +244,24 @@ def test_vote_single_already_voted_on_paper():
         id=1,
         )
     p.save()
+    u = User(username='admin', password='pass')
+    u.save()
     ticket = Ticket(
         voter=p,
         release_place=place,
+        releaser=u,
         submit_place=place,
+        submitter=u,
         )
     ticket.save()
     c = Client()
+
+    fake_request = HttpRequest()
+    fake_request.META['HTTP_MAIL'] = 'admin@utu.fi'
+    fake_request.META['HTTP_DISPLAYNAME'] = ''
+    fake_request.META['HTTP_SN'] = ''
+
+    c.login(request=fake_request)
     response = c.post(
         '/tarkistus/commit/',
         {'number': '1234', 'organization': 'tukkk.fi', 'place': 1}
@@ -256,6 +309,14 @@ def test_vote_no_ticket():
         )
     p.save()
     c = Client()
+    User(username='admin', password='pass').save()
+
+    fake_request = HttpRequest()
+    fake_request.META['HTTP_MAIL'] = 'admin@utu.fi'
+    fake_request.META['HTTP_DISPLAYNAME'] = ''
+    fake_request.META['HTTP_SN'] = ''
+
+    c.login(request=fake_request)
     response = c.post(
         '/tarkistus/commit/',
         {'number': '1234', 'organization': 'tukkk.fi', 'place': 1}
@@ -302,6 +363,14 @@ def test_vote_success_single():
         )
     p.save()
     c = Client()
+    User(username='admin', password='pass').save()
+
+    fake_request = HttpRequest()
+    fake_request.META['HTTP_MAIL'] = 'admin@utu.fi'
+    fake_request.META['HTTP_DISPLAYNAME'] = ''
+    fake_request.META['HTTP_SN'] = ''
+
+    c.login(request=fake_request)
     response = c.post(
         '/tarkistus/commit/',
         {'number': '1234', 'organization': 'tukkk.fi', 'place': 1}
@@ -352,12 +421,22 @@ def test_vote_different_submit():
         id=1,
         )
     p.save()
+    u = User(username='admin', password='pass')
+    u.save()
     t = Ticket(
         voter=p,
         release_place=place,
+        releaser=u,
         )
     t.save()
     c = Client()
+
+    fake_request = HttpRequest()
+    fake_request.META['HTTP_MAIL'] = 'admin@utu.fi'
+    fake_request.META['HTTP_DISPLAYNAME'] = ''
+    fake_request.META['HTTP_SN'] = ''
+
+    c.login(request=fake_request)
     response = c.post(
         '/tarkistus/commit/',
         {'number': '1234', 'organization': 'tukkk.fi', 'place': 2}
@@ -408,12 +487,22 @@ def test_vote_return_slip():
         id=1,
         )
     p.save()
+    u = User(username='admin', password='pass')
+    u.save()
     t = Ticket(
         voter=p,
         release_place=place,
+        releaser=u,
         )
     t.save()
     c = Client()
+
+    fake_request = HttpRequest()
+    fake_request.META['HTTP_MAIL'] = 'admin@utu.fi'
+    fake_request.META['HTTP_DISPLAYNAME'] = ''
+    fake_request.META['HTTP_SN'] = ''
+
+    c.login(request=fake_request)
     response = c.post(
         '/tarkistus/commit/',
         {'number': '1234', 'organization': 'tukkk.fi', 'place': 1}
@@ -465,6 +554,14 @@ def test_vote_whole_procedure():
         )
     p.save()
     c = Client()
+    User(username='admin', password='pass').save()
+
+    fake_request = HttpRequest()
+    fake_request.META['HTTP_MAIL'] = 'admin@utu.fi'
+    fake_request.META['HTTP_DISPLAYNAME'] = ''
+    fake_request.META['HTTP_SN'] = ''
+
+    c.login(request=fake_request)
     settings.TEST_TIME = datetime(1900, 1, 1)
     response = c.post('/tarkistus/commit/',
                       {'number': '1234', 'organization': 'tukkk.fi', 'place': 1})
@@ -512,26 +609,66 @@ def test_vote_whole_procedure():
 
 def test_whois_get():
     c = Client()
+    User(username='admin', password='pass').save()
+
+    fake_request = HttpRequest()
+    fake_request.META['HTTP_MAIL'] = 'admin@utu.fi'
+    fake_request.META['HTTP_DISPLAYNAME'] = ''
+    fake_request.META['HTTP_SN'] = ''
+
+    c.login(request=fake_request)
     response = c.get('/tarkistus/whois/')
     eq(response.status_code, 405)
 
 def test_vote_get():
     c = Client()
+    User(username='admin', password='pass').save()
+
+    fake_request = HttpRequest()
+    fake_request.META['HTTP_MAIL'] = 'admin@utu.fi'
+    fake_request.META['HTTP_DISPLAYNAME'] = ''
+    fake_request.META['HTTP_SN'] = ''
+
+    c.login(request=fake_request)
     response = c.get('/tarkistus/commit/')
     eq(response.status_code, 405)
 
 def test_index_post():
     c = Client()
+    User(username='admin', password='pass').save()
+
+    fake_request = HttpRequest()
+    fake_request.META['HTTP_MAIL'] = 'admin@utu.fi'
+    fake_request.META['HTTP_DISPLAYNAME'] = ''
+    fake_request.META['HTTP_SN'] = ''
+
+    c.login(request=fake_request)
     response = c.post('/tarkistus/')
     eq(response.status_code, 405)
 
 def test_index_get():
     c = Client()
+    User(username='admin', password='pass').save()
+
+    fake_request = HttpRequest()
+    fake_request.META['HTTP_MAIL'] = 'admin@utu.fi'
+    fake_request.META['HTTP_DISPLAYNAME'] = ''
+    fake_request.META['HTTP_SN'] = ''
+
+    c.login(request=fake_request)
     response = c.get('/tarkistus/')
     eq(response.status_code, 200)
 
 def test_index_voteplace():
     c = Client()
+    User(username='admin', password='pass').save()
+
+    fake_request = HttpRequest()
+    fake_request.META['HTTP_MAIL'] = 'admin@utu.fi'
+    fake_request.META['HTTP_DISPLAYNAME'] = ''
+    fake_request.META['HTTP_SN'] = ''
+
+    c.login(request=fake_request)
     p = Place(name='Foobarland')
     p.save()
     response = c.get('/tarkistus/')
@@ -539,6 +676,9 @@ def test_index_voteplace():
     assert 'Foobarland' in response.content
 
 def test_get_tickets_out():
+    u = User(username='admin', password='pass')
+    u.save()
+
     place = Place(name='Foobarland')
     place.save()
     e = Election(
@@ -565,7 +705,7 @@ def test_get_tickets_out():
         id=1,
         )
     p.save()
-    p.give_slip(place)
+    p.give_slip(place, u)
     p = Person(
         personnumber="1234",
         electionname=e,
@@ -576,7 +716,7 @@ def test_get_tickets_out():
         id=2,
         )
     p.save()
-    p.give_slip(place)
+    p.give_slip(place, u)
     p = Person(
         personnumber="32234",
         electionname=e,
@@ -587,8 +727,15 @@ def test_get_tickets_out():
         id=3,
         )
     p.save()
-    p.give_slip(place)
+    p.give_slip(place, u)
     c = Client()
+
+    fake_request = HttpRequest()
+    fake_request.META['HTTP_MAIL'] = 'admin@utu.fi'
+    fake_request.META['HTTP_DISPLAYNAME'] = ''
+    fake_request.META['HTTP_SN'] = ''
+
+    c.login(request=fake_request)
     response = c.get('/tarkistus/list/%d/' % place.id)
     eq(response.status_code, 200)
     try:
@@ -666,6 +813,14 @@ def test_vote_success_different_orgs_same_person():
         )
     p1.save()
     c = Client()
+    User(username='admin', password='pass').save()
+
+    fake_request = HttpRequest()
+    fake_request.META['HTTP_MAIL'] = 'admin@utu.fi'
+    fake_request.META['HTTP_DISPLAYNAME'] = ''
+    fake_request.META['HTTP_SN'] = ''
+
+    c.login(request=fake_request)
     response = c.post(
         '/tarkistus/commit/',
         {'number': '1234', 'organization': 'tukkk.fi', 'place': 1}

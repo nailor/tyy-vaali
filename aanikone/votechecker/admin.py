@@ -6,3 +6,4 @@ from django.contrib import admin
 
 admin.site.register(Place)
 admin.site.register(Ticket)
+admin.site.register(Person)

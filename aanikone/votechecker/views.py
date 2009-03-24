@@ -85,10 +85,11 @@ def vote(request):
                 f.person.vote()
                 ticket.submit_place = f.place
                 ticket.submit_time = now()
+                ticket.submitter = request.user
                 ticket.save()
                 return json_response({'ok': _('OK. Ticket can be stamped.')})
         return json_response({'errors': errors})
-    f.person.give_slip(f.place)
+    f.person.give_slip(f.place, request.user)
     return json_response({'ok': _('OK. Give ticket.')})
 
 @login_required

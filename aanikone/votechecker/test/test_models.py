@@ -1,5 +1,5 @@
 from nose.tools import eq_ as eq, with_setup
-
+from django.contrib.auth.models import User
 from aanikone.votechecker.models import *
 
 def test_unicode_person():
@@ -273,7 +273,9 @@ def test_person_find_ticket():
         personnumber='1'
         )
     p1.save()
-    t = Ticket(voter=p1, release_place=place)
+    u = User(username='admin')
+    u.save()
+    t = Ticket(voter=p1, release_place=place, releaser=u)
     t.save()
 
     tickets = p1.get_ticket()
@@ -323,7 +325,9 @@ def test_person_multiple_find_ticket():
         votestyle=1,
         personnumber='2'
         )
-    t = Ticket(voter=p1, release_place=place)
+    u = User(username='admin')
+    u.save()
+    t = Ticket(voter=p1, release_place=place, releaser=u)
     t.save()
 
     tickets = p.get_ticket()
