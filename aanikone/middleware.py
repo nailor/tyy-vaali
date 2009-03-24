@@ -15,7 +15,7 @@ class ShibbolethMiddleware(object):
 
         """
         try:
-            if 'HTTP_UID' in request.META:
+            if 'HTTP_UID' in request.META and request.META['HTTP_UID']:
                 username = request.META['HTTP_UID']
             else:
                 username, domain = request.META['HTTP_MAIL'].split('@')
