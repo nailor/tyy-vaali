@@ -10,19 +10,21 @@ class ShibbolethBackend(object):
         in form of username@utu.fi.
 
         """
+        if 'HTTP_UID' in request.META and request.META['HTTP_UID']:
+            username = request.META['HTTP_UID']
+        else:
+            username, domain = request.META['HTTP_MAIL'].split('@')
+
         try:
-            if 'HTTP_UID' in request.META and request.META['HTTP_UID']:
-                username = request.META['HTTP_UID']
-            else:
-                username, domain = request.META['HTTP_MAIL'].split('@')
             user = User.objects.get(username=username)
-            if not user.first_name or user.last_name:
-                user.first_name = request.META['HTTP_DISPLAYNAME']
-                user.last_name = request.META['HTTP_SN']
-                user.save()
-            return user
         except User.DoesNotExist:
             return None
+
+        if not user.first_name or user.last_name:
+            user.first_name = request.META['HTTP_DISPLAYNAME']
+            user.last_name = request.META['HTTP_SN']
+            user.save()
+        return user
 
     def get_user(self, user_id):
         try:
