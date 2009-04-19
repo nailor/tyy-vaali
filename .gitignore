@@ -6,3 +6,7 @@
 
 # Ignore developer settings
 aanikone/settings-*
+
+# Ignore generated documents
+doc/*.html
+README.html
