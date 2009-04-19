@@ -2,26 +2,18 @@ Tyy:n edustajistovaalien äänioikeuden tarkistuskone
 ---------------------------------------------------
 
 
-1. Asennus
+* Asennus: Katso ``doc/manual.rst``
 
- - Sorsat on debian-paketoitu, debian paketin voi rakentaa seuraavasti:
-   1. debian/rules generate
-   2. dpkg-buildpackage -us -uc -rfakeroot
+* HTML-muotoisen dokumentaation saa ajamalla komennon::
 
- - Mukana on toki myös setup.py, jonka avulla asentaminen onnistuu komennolla:
+    make
 
-   python setup.py install
-
-2. Muuta?
-
- - Ehkä.
-
-3. Syylliset
+* Syylliset
 
  - Uusi ja uljas äänioikeudentarkastusjärestelmä 2009 (c) Jyrki Pulliainen
  - Taustalla olevasta kannasta vastuussa Lasse Saarinen
 
-4. Lisenssi
+* Lisenssi
 
     Copyright 2009 Jyrki Pulliainen.
 
@@ -38,4 +30,9 @@ Tyy:n edustajistovaalien äänioikeuden tarkistuskone
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-    Lisessi kokonaisuudessaan tiedostossa COPYING
+    Lisessi kokonaisuudessaan tiedostossa ``COPYING``
+
+* Lähdekoodi
+
+    Viimeisin lähdekoodi on saatavissa osoitteessa
+    http://github.com/nailor/tyy-vaali/
